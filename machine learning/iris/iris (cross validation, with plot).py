@@ -34,10 +34,20 @@ for i in range(len(flowerlist)):
 y=flowerlist
 Xar=np.array(X)
 yar=np.array(y)
-print(Xar)
-print(yar)
+# print(Xar)
+# print(yar)
+plt.title('sepal height and width')
+plt.xlabel('sepal height')
+plt.ylabel('sepal width')
 plt.scatter(Xar[:,0], Xar[:,1], c='red', s=30, cmap=plt.cm.Paired)
 plt.show()
+plt.savefig('plot1.png', dpi=300)
+plt.title('petal height and width')
+plt.xlabel('petal height')
+plt.ylabel('petal width')
+plt.scatter(Xar[:,2], Xar[:,3], c='blue', s=30, cmap=plt.cm.Paired)
+plt.show()
+plt.savefig('plot2.png', dpi=300)
 k_fold=int(input("cross validation할 k_fold값(데이터 개수를 니눴을 때 나누어 떨어져야 오류가 발생하지 않습니다.): "))
 new_X=[[] for i in range(k_fold)]
 new_y=[[] for i in range(k_fold)]
