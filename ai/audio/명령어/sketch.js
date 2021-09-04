@@ -18,6 +18,7 @@ let label = "listening";
 // Teachable Machine model URL:
 let soundModelURL = 'https://teachablemachine.withgoogle.com/models/x1qwcSSiN//model.json';
 
+navigator.mediaDevices.getUserMedia(constraints)
 
 function preload() {
   // Load the model
