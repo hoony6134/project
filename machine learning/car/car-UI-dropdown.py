@@ -1,12 +1,14 @@
+import numpy as np
+import matplotlib.pyplot as plt
 import tkinter
+import os
 import tkinter.ttk
 from sklearn import neighbors, datasets
 from sklearn import svm
 from sklearn.linear_model import LinearRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-file=open('machine learning/car/car.csv')
-from setuptools import setup
-import py2app
+from tkinter import messagebox
+file=open('car.csv')
 window=tkinter.Tk()
 # cw=tkinter.Tk()
 # cw.mainloop()
@@ -14,6 +16,46 @@ window=tkinter.Tk()
 # cw.title("학습 데이터 설정")
 # cw.geometry("640x400+100+100")
 # cw.resizable(False, False)
+
+global buying
+global maint
+global doors
+global persons
+global lb
+global safety
+buyingdrop=[
+    "매우 비쌈",
+    "비쌈",
+    "보통",
+    "저렴함"
+]
+maintdrop=[
+    "매우 잘 관리됨",
+    "잘 관리됨",
+    "보통",
+    "잘 관리되지 않음"
+]
+doorsdrop=[
+    "2개",
+    "3개",
+    "4개",
+    "5개 이상"
+]
+personsdrop=[
+    "2인승",
+    "4인승",
+    "4인승 초과"
+]
+lugdrop=[
+    "작음",
+    "보통",
+    "큼"
+]
+safetydrop=[
+    "안전",
+    "보통",
+    "안전하지 않음"
+]
 
 window.title("차량 등급 확인")
 window.geometry("640x400+100+100")
@@ -34,6 +76,39 @@ print("▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆�
 
 titlelabel = tkinter.Label(window, text="차량 등급 판별기", font=("Nanum Gothic", 20), fg="green")
 titlelabel.grid(row=0, column=0)
+modellist=[
+    "linear",
+    "poly",
+    "rbf",
+    "sigmoid",
+    "precomputed",
+    "lda",
+    "knn"
+]
+
+modelopt=tkinter.StringVar(window)
+modelopt.set("옵션을 선택해 주세요.")
+
+modeltxt = tkinter.Label(window, text="모델 종류").grid(row=2, column=0)
+opt=tkinter.OptionMenu(window, modelopt, *modellist)
+opt.config(width=12, font=('Helvetica', 12))
+opt.grid(row=2, column=1)
+def modelcallback(*args):
+    global models
+    # debuglabel1.configure(text=buyingopt.get())
+    models=modelopt.get()
+    print(models)
+
+modelopt.trace("w", modelcallback)
+
+
+def calc(event):
+    k_fold=str(kfoldinput.get())
+
+klabel=tkinter.Label(window, text="k_fold").grid(row=2, column=2)
+kfoldinput=tkinter.Entry(window)
+kfoldinput.bind("<Motion>", calc)
+kfoldinput.grid(row=2, column=3)
 
 for line in file.readlines():
     line = line.replace('\n', '')
@@ -119,6 +194,8 @@ for i in range(len(resultlist)):
 
 total_percentage=0
 models = input("모델의 종류를 입력해주세요(linear,poly,rbf,sigmoid,precomputed,lda,knn): ")
+
+
 if models=="knn":
     neigh = int(input("n_neighbors 값을 입력하세요: "))
 for test_group in range(k_fold):
@@ -189,10 +266,10 @@ for test_group in range(k_fold):
     print("테스트 그룹: "+str(test_group+1))
     print("정확도: "+str(percentage)+"% ("+str(correct_count)+"/"+str(total_count)+")\n")
 total_percentage/=k_fold
-print("----------------------------------------")
-print("모델 종류: "+str(models.upper()))
-print("cross validation 전체 정확도: "+str(total_percentage)+"%")
-print("----------------------------------------\n<데이터로 차 등급 예측>")
+# print("----------------------------------------")
+# print("모델 종류: "+str(models.upper()))
+# print("cross validation 전체 정확도: "+str(total_percentage)+"%")
+# print("----------------------------------------\n<데이터로 차 등급 예측>")
 # ax = plt.gca()
 # xlim = ax.get_xlim()
 # ylim = ax.get_ylim()
@@ -212,85 +289,178 @@ global persons
 global lb
 global safety
 
-def buyingset(event):
-    global buying
-    buying=input1.get()
+buyingopt=tkinter.StringVar(window)
+buyingopt.set("옵션을 선택해 주세요.")
+maintopt=tkinter.StringVar(window)
+maintopt.set("옵션을 선택해 주세요.")
+doorsopt=tkinter.StringVar(window)
+doorsopt.set("옵션을 선택해 주세요.")
+personsopt=tkinter.StringVar(window)
+personsopt.set("옵션을 선택해 주세요.")
+lbopt=tkinter.StringVar(window)
+lbopt.set("옵션을 선택해 주세요.")
+safetyopt=tkinter.StringVar(window)
+safetyopt.set("옵션을 선택해 주세요.")
 
-def maintset(event):
-    global maint
-    maint=input2.get()
-
-def doorsset(event):
-    global doors
-    doors=input3.get()
-
-def personsset(event):
-    global persons
-    persons=input4.get()
-
-def lbset(event):
-    global lb
-    lb=input5.get()
-
-def safetyset(event):
-    global safety
-    safety=input6.get()
+# def buyingset():
+#     global buying
+#     buying=buyingopt.get()
+#
+# def maintset(event):
+#     global maint
+#     maint=input2.get()
+#
+# def doorsset(event):
+#     global doors
+#     doors=input3.get()
+#
+# def personsset(event):
+#     global persons
+#     persons=input4.get()
+#
+# def lbset(event):
+#     global lb
+#     lb=input5.get()
+#
+# def safetyset(event):
+#     global safety
+#     safety=input6.get()
 
 global color
 global level
 
 modelup = models.upper()
 
-
 modellabel = tkinter.Label(window, text="학습한 모델: "+modelup)
 modellabel.grid(row=1, column=0)
 accuracylabel = tkinter.Label(window, text="정확도: "+str(total_percentage)+"%")
 accuracylabel.grid(row=1, column=1)
 
-blanklabel = tkinter.Label(window, text="")
-blanklabel.grid(row=2, column=0)
+# blanklabel = tkinter.Label(window, text="")
+# blanklabel.grid(row=2, column=0)
 
 label1 = tkinter.Label(window, text='차량 구매 가격')
 label1.grid(row=3, column=0)
 
-input1 = tkinter.Entry(window)
-input1.bind("<Motion>", buyingset)
-input1.grid(row=3, column=1)
+opt1=tkinter.OptionMenu(window, buyingopt, *buyingdrop)
+opt1.config(width=12, font=('Helvetica', 12))
+opt1.grid(row=3, column=1)
+# debuglabel1=tkinter.Label(window, text=buyingopt)
+# debuglabel1.grid(row=3, column=2)
+def buyingcallback(*args):
+    global buying
+    # debuglabel1.configure(text=buyingopt.get())
+    temp=buyingopt.get()
+    if temp=="매우 비쌈":
+        buying=4
+    elif temp=="비쌈":
+        buying=3
+    elif temp=="보통":
+        buying=2
+    elif temp=="저렴함":
+        buying=1
+    print(buying)
+
+buyingopt.trace("w", buyingcallback)
 
 label2 = tkinter.Label(window, text='유지 보수 상태')
 label2.grid(row=4, column=0)
 
-input2 = tkinter.Entry(window)
-input2.bind("<Motion>", maintset)
-input2.grid(row=4, column=1)
+opt2=tkinter.OptionMenu(window, maintopt, *maintdrop)
+opt2.config(width=12, font=('Helvetica', 12))
+opt2.grid(row=4, column=1)
+def maintcallback(*args):
+    global maint
+    temp=maintopt.get()
+    if temp=="매우 잘 관리됨":
+        maint=4
+    elif temp=="잘 관리됨":
+        maint=3
+    elif temp=="보통":
+        maint=2
+    elif temp=="잘 관리되지 않음":
+        maint=1
+    print(maint)
+
+maintopt.trace("w", maintcallback)
 
 label3 = tkinter.Label(window, text='차량 문 개수')
 label3.grid(row=5, column=0)
 
-input3 = tkinter.Entry(window)
-input3.bind("<Motion>", doorsset)
-input3.grid(row=5, column=1)
+opt3=tkinter.OptionMenu(window, doorsopt, *doorsdrop)
+opt3.config(width=12, font=('Helvetica', 12))
+opt3.grid(row=5, column=1)
+def doorscallback(*args):
+    global doors
+    temp=doorsopt.get()
+    if temp=="5개 이상":
+        doors=4
+    elif temp=="4개":
+        doors=3
+    elif temp=="3개":
+        doors=2
+    elif temp=="2개":
+        doors=1
+    print(doors)
+
+doorsopt.trace("w", doorscallback)
 
 label4 = tkinter.Label(window, text='탑승 가능 명수 (n인승 차량)')
 label4.grid(row=6, column=0)
 
-input4 = tkinter.Entry(window)
-input4.bind("<Motion>", personsset)
-input4.grid(row=6, column=1)
+opt4=tkinter.OptionMenu(window, personsopt, *personsdrop)
+opt4.config(width=12, font=('Helvetica', 12))
+opt4.grid(row=6, column=1)
+def personscallback(*args):
+    global persons
+    temp=personsopt.get()
+    if temp=="4인승 초과":
+        persons=3
+    elif temp=="4인승":
+        persons=2
+    elif temp=="2인승":
+        persons=1
+    print(persons)
+
+personsopt.trace("w", personscallback)
 
 label5 = tkinter.Label(window, text='트렁크 사이즈')
 label5.grid(row=7, column=0)
 
-input5 = tkinter.Entry(window)
-input5.bind("<Motion>", lbset)
-input5.grid(row=7, column=1)
+opt5=tkinter.OptionMenu(window, lbopt, *lugdrop)
+opt5.config(width=12, font=('Helvetica', 12))
+opt5.grid(row=7, column=1)
+def lbcallback(*args):
+    global lb
+    temp=lbopt.get()
+    if temp=="큼":
+        lb=3
+    elif temp=="보통":
+        lb=2
+    elif temp=="작음":
+        lb=1
+    print(lb)
+
+lbopt.trace("w", lbcallback)
 
 label6 = tkinter.Label(window, text='안전성')
 label6.grid(row=8, column=0)
 
-input6 = tkinter.Entry(window)
-input6.bind("<Motion>", safetyset)
-input6.grid(row=8, column=1)
+opt6=tkinter.OptionMenu(window, safetyopt, *safetydrop)
+opt6.config(width=12, font=('Helvetica', 12))
+opt6.grid(row=8, column=1)
+def safetycallback(*args):
+    global safety
+    temp=safetyopt.get()
+    if temp=="안전":
+        safety=3
+    elif temp=="보통":
+        safety=2
+    elif temp=="안전하지 않음":
+        safety=1
+    print(safety)
+
+safetyopt.trace("w", safetycallback)
 
 
 def predict():
@@ -305,11 +475,13 @@ def predict():
     if clf.predict(newdata)[0] == "unacc":
         progressbar.step(70)
         resultlabel.config(text="사면 안됨!", fg="red")
+        messagebox.showinfo("예측 결과", "해당 자동차를 사지 않는 것이 좋습니다.")
         progressbar.step(10)
         progressbar.stop()
     elif clf.predict(newdata)[0] == "acc":
         progressbar.step(70)
         resultlabel.config(text="사도 됨!", fg="green")
+        messagebox.showinfo("예측 결과", "해당 자동차를 사도 될 것 같습니다!")
         progressbar.stop()
 
 bl2 = tkinter.Label(window, text="")
